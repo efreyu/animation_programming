@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
+#include <format>
 
 #ifndef NDEBUG
 #if defined(__GNUC__) || defined(__clang__)
@@ -30,16 +31,16 @@
         }                                                                           \
     } while (false)
 
-#define error_msg_base(message)                                                     \
+#define error_msg(message)                                                          \
     do {                                                                            \
         std::cerr << __FUNCTION__ << __FILE__ << __LINE__ << message;               \
         std::cerr.flush();                                                          \
         GENERATE_TRAP();                                                            \
     } while (false)
-#define error_msg(format_str, ...)                                                  \
+#define error_msg_format(format_str, ...)                                           \
     do {                                                                            \
         std::string formatted_msg = std::format(format_str, __VA_ARGS__);           \
-        error_msg_base(formatted_msg);                                              \
+        error_msg(formatted_msg);                                                   \
     } while (false)
 
 //#define info_msg_base(message)                                                                    \
@@ -57,12 +58,12 @@
 // the execution of the condition so don't define the expression
 // as anything that would be considered program logis.
 //
-#define assertion(condition, message)   static_cast<void>(0)
-#define error_msg_base(message)         static_cast<void>(0)
-#define error_msg(format_str, ...)      static_cast<void>(0)
-//#define info_msg_base(message)          static_cast<void>(0)
-//#define info_msg(...)                   static_cast<void>(0)
-#define runtime_assert(condition)       static_cast<void>(0)
+#define assertion(condition, message)       static_cast<void>(0)
+#define error_msg(message)                  static_cast<void>(0)
+#define error_msg_format(format_str, ...)   static_cast<void>(0)
+//#define info_msg_base(message)              static_cast<void>(0)
+//#define info_msg(...)                       static_cast<void>(0)
+#define runtime_assert(condition)           static_cast<void>(0)
 #endif
 
 #endif  // ANIMAFLOW_CORE_MODULE_ASSERT_HPP

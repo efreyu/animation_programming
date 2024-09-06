@@ -97,13 +97,9 @@ include( ClangFormat )
 # 3rd party library setup/configuration
 # =======================================================================
 
-find_package(glfw3 3.3 REQUIRED)
-
-if(UNIX OR APPLE)
-    set(GLFW3_LIBRARY glfw)
-endif()
-
-include_directories(${GLFW3_INCLUDE_DIR})
+add_definitions(-DGLEW_STATIC)
+add_subdirectory(thirdparty/glfw EXCLUDE_FROM_ALL)
+add_subdirectory(thirdparty/glew EXCLUDE_FROM_ALL)
 
 #add_subdirectory(thirdparty/fmt)
 #add_subdirectory(thirdparty/magic_enum)
@@ -113,7 +109,8 @@ include_directories(${GLFW3_INCLUDE_DIR})
 # =======================================================================
 
 target_link_libraries(${PROJECT_NAME}
-        PRIVATE ${GLFW3_LIBRARY}
+        PRIVATE glfw
+        PRIVATE libglew_static
 #        PRIVATE fmt::fmt
 #        PRIVATE fmt::fmt-header-only
 #        PRIVATE spdlog::spdlog_header_only

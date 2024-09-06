@@ -2,7 +2,7 @@
 #ifndef ANIMAFLOW_CORE_MODULE_ATTRIBUTES_HPP
 #define ANIMAFLOW_CORE_MODULE_ATTRIBUTES_HPP
 
-namespace af::inline utils {
+namespace af::inline core {
 
 #if defined(_MSC_VER)
         // MSVC doesn't have a clean way to ignore custom
