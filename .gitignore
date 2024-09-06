@@ -1,0 +1,39 @@
+# IDEAs
+.idea
+.vs/**
+.vscode/*
+
+# Misc
+.DS_Store
+logs/
+
+# Build
+*.pyc
+
+# Binaries
+*.o
+*.os
+*.so
+*.obj
+*.bc
+*.pyc
+*.dblite
+*.pdb
+*.lib
+bin
+*.config
+*.creator
+*.creator.user
+*.files
+*.includes
+*.idb
+
+CMakeLists.txt.user
+
+# temporary build folders
+cmake-build-*
+build
+build-*
+vscode-build-*
+*.keystore
+
