@@ -1,6 +1,6 @@
 ﻿cmake_minimum_required( VERSION 3.23 )
 
-set(PROJECT_NAME animation_app)
+set(PROJECT_NAME AnimaFlow)
 set(PROJECT_VERSION 0.1.0)
 
 message( STATUS "Using CMake ${CMAKE_VERSION}" )
