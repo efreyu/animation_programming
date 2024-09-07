@@ -18,6 +18,11 @@ namespace af::inline core {
         void cleanup();
 
     private:
+        void handleWindowMoveEvents(int xPos, int yPos);
+        void handleWindowMinimizedEvents(int minimized);
+        void handleWindowMaximizedEvents(int maximized);
+        void handleWindowCloseEvents();
+
         GLFWwindow* mWindow { nullptr };
         std::string mApplicationName;
 
