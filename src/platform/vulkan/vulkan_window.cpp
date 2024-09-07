@@ -137,8 +137,8 @@ void VulkanWindow::mainLoop() {
 void VulkanWindow::cleanup() {
     info_msg("Cleaning up window");
 
-//    vkDestroySurfaceKHR(mInstance, mSurface, nullptr);
-//    vkDestroyInstance(mInstance, nullptr);
+    vkDestroySurfaceKHR(mInstance, mSurface, nullptr);
+    vkDestroyInstance(mInstance, nullptr);
 
     glfwDestroyWindow(mWindow);
     glfwTerminate();

@@ -6,6 +6,7 @@
 
 namespace af::inline platform {
     class WindowInterface {
+    public:
         virtual ~WindowInterface() = default;
 
         // Initialize the window and graphics context

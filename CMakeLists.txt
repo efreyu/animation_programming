@@ -114,6 +114,7 @@ if(USE_VULKAN)
     endif()
     find_package(Vulkan REQUIRED)
     set(RENDER_LIBS ${RENDER_LIBS} Vulkan::Vulkan)
+    add_definitions(-DUSE_VULKAN) # Add a definition to the project
 else()
     add_subdirectory(thirdparty/glew EXCLUDE_FROM_ALL)
     set(RENDER_LIBS ${RENDER_LIBS} libglew_static)

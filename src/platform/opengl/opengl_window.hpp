@@ -12,7 +12,8 @@ namespace af::inline platform {
 
     class OpenGLWindow : public WindowInterface {
     public:
-        ~OpenGLWindow() override;
+        OpenGLWindow() {};
+        ~OpenGLWindow() override {};
 
         bool init(unsigned int width, unsigned int height, const std::string& title) override;
         void mainLoop() override;
