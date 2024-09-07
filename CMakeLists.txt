@@ -102,6 +102,12 @@ add_definitions(-DGL_SILENCE_DEPRECATION)
 add_subdirectory(thirdparty/glfw EXCLUDE_FROM_ALL)
 add_subdirectory(thirdparty/glew EXCLUDE_FROM_ALL)
 
+if(NOT DEFINED ENV{VULKAN_SDK})
+    message(FATAL_ERROR "VULKAN_SDK environment variable is not set. Please install Vulkan SDK and set the environment variable.")
+endif()
+find_package(Vulkan REQUIRED)
+
+
 #add_subdirectory(thirdparty/fmt)
 #add_subdirectory(thirdparty/magic_enum)
 
@@ -110,6 +116,7 @@ add_subdirectory(thirdparty/glew EXCLUDE_FROM_ALL)
 # =======================================================================
 
 target_link_libraries(${PROJECT_NAME}
+        PRIVATE Vulkan::Vulkan
         PRIVATE glfw
         PRIVATE libglew_static
 #        PRIVATE fmt::fmt

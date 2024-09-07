@@ -1,5 +1,7 @@
 #include "window.hpp"
+
 #include "core/assert.hpp"
+
 #include <GLFW/glfw3.h>
 
 using namespace af;
@@ -10,9 +12,19 @@ bool Window::init(unsigned int width, unsigned int height, const std::string& ti
         return false;
     }
 
+    if (!glfwVulkanSupported()) {
+        glfwTerminate();
+        error_msg("Vulkan is not supported");
+        return false;
+    }
+
+    mApplicationName = title;
+
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-    mWindow = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
+    /* Vulkan needs no context */
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+    mWindow = glfwCreateWindow(width, height, mApplicationName.c_str(), nullptr, nullptr);
 
     if (!mWindow) {
         error_msg_format("Could not create window: {}", title.c_str());
@@ -20,35 +32,115 @@ bool Window::init(unsigned int width, unsigned int height, const std::string& ti
         return false;
     }
 
+    if (!initVulkan()) {
+        error_msg("Could not init Vulkan");
+        glfwTerminate();
+        return false;
+    }
+
     glfwMakeContextCurrent(mWindow);
 
-//    Logger::log(1, "%s: Window successfully initialized\n", __FUNCTION__);
+    info_msg("Window successfully initialized");
+    return true;
+}
+
+bool Window::initVulkan() {
+    VkResult result = VK_ERROR_UNKNOWN;
+
+    VkApplicationInfo mAppInfo{};
+    mAppInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+    mAppInfo.pNext = nullptr;
+    mAppInfo.pApplicationName = mApplicationName.c_str();
+    mAppInfo.applicationVersion = VK_MAKE_API_VERSION(0, 0, 0, 1);
+    mAppInfo.pEngineName = "AnimaFlow: Game Animations Programming";
+    mAppInfo.engineVersion = VK_MAKE_API_VERSION(0, 1, 0, 0);
+    mAppInfo.apiVersion = VK_MAKE_API_VERSION(0, 1, 1, 0);
+
+    uint32_t extensionCount = 0;
+    const char** extensions = glfwGetRequiredInstanceExtensions(&extensionCount);
+    std::vector<const char*> extNames;
+#ifdef __APPLE__
+    extNames.push_back(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
+    extNames.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
+#endif
+
+    if (extensionCount == 0) {
+        error_msg("No Vulkan extensions found, need at least 'VK_KHR_surface'");
+        return false;
+    }
+
+    info_msg_format("Found {} Vulkan extensions:", extensionCount);
+    for (int i = 0; i < extensionCount; ++i) {
+        info_msg_format(" - {}", extensions[i]);
+        extNames.push_back(extensions[i]);
+    }
+
+    VkInstanceCreateInfo mCreateInfo{};
+    mCreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+    mCreateInfo.pNext = nullptr;
+    mCreateInfo.pApplicationInfo = &mAppInfo;
+    mCreateInfo.enabledLayerCount = 0;
+#ifdef __APPLE__
+    mCreateInfo.flags = VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
+#endif
+    mCreateInfo.enabledExtensionCount = static_cast<uint32_t>(extNames.size());
+    mCreateInfo.ppEnabledExtensionNames = extNames.data();
+
+
+    result = vkCreateInstance(&mCreateInfo, nullptr, &mInstance);
+    if (result != VK_SUCCESS) {
+        error_msg_format("Could not create Vulkan instance: {}", static_cast<int>(result));
+        return false;
+    }
+
+    uint32_t physicalDeviceCount = 0;
+    vkEnumeratePhysicalDevices(mInstance, &physicalDeviceCount, nullptr);
+
+    if (physicalDeviceCount == 0) {
+        error_msg("No Vulkan capable GPU found");
+        return false;
+    }
+
+    std::vector<VkPhysicalDevice> devices;
+    devices.resize(physicalDeviceCount);
+    vkEnumeratePhysicalDevices(mInstance, &physicalDeviceCount, devices.data());
+
+    info_msg_format("Found {} physical device(s)", physicalDeviceCount);
+
+    result = glfwCreateWindowSurface(mInstance, mWindow, nullptr, &mSurface);
+    if (result != VK_SUCCESS) {
+        error_msg("Could not create Vulkan surface");
+        return false;
+    }
+
     return true;
 }
 
 void Window::mainLoop() {
     // force VSYNC
-    glfwSwapInterval(1);
+    //    glfwSwapInterval(1);
 
-    float color = 0.0f;
+    //    float color = 0.0f;
     while (!glfwWindowShouldClose(mWindow)) {
-
-        color >= 1.0f ? color = 0.0f : color += 0.01f;
-
-        glClearColor(color, color, color, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        /* swap buffers */
-        glfwSwapBuffers(mWindow);
+        //        color >= 1.0f ? color = 0.0f : color += 0.01f;
+        //
+        //        glClearColor(color, color, color, 1.0f);
+        //        glClear(GL_COLOR_BUFFER_BIT);
+        //
+        //        /* swap buffers */
+        //        glfwSwapBuffers(mWindow);
 
         /* poll events in a loop */
         glfwPollEvents();
-
     }
 }
 
 void Window::cleanup() {
-//    Logger::log(1, "%s: Terminating Window\n", __FUNCTION__);
+    info_msg("Cleaning up window");
+
+    vkDestroySurfaceKHR(mInstance, mSurface, nullptr);
+    vkDestroyInstance(mInstance, nullptr);
+
     glfwDestroyWindow(mWindow);
     glfwTerminate();
 }
