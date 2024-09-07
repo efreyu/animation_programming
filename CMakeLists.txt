@@ -98,6 +98,7 @@ include( ClangFormat )
 # =======================================================================
 
 add_definitions(-DGLEW_STATIC)
+add_definitions(-DGL_SILENCE_DEPRECATION)
 add_subdirectory(thirdparty/glfw EXCLUDE_FROM_ALL)
 add_subdirectory(thirdparty/glew EXCLUDE_FROM_ALL)
 
