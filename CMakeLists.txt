@@ -117,7 +117,8 @@ if(USE_VULKAN)
     add_definitions(-DUSE_VULKAN) # Add a definition to the project
 else()
     add_subdirectory(thirdparty/glew EXCLUDE_FROM_ALL)
-    set(RENDER_LIBS ${RENDER_LIBS} libglew_static)
+    add_subdirectory(thirdparty/glad)
+    set(RENDER_LIBS ${RENDER_LIBS} libglew_static glad)
 endif()
 
 
