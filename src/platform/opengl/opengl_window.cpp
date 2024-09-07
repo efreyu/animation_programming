@@ -48,6 +48,27 @@ bool OpenGLWindow::init(unsigned int width, unsigned int height, const std::stri
         thisWindow->handleWindowCloseEvents();
     });
 
+    glfwSetKeyCallback(mWindow, [](GLFWwindow *win, int key, int scancode, int action, int mods) {
+        auto thisWindow = static_cast<OpenGLWindow*>(glfwGetWindowUserPointer(win));
+        thisWindow->handleKeyEvents(key, scancode, action, mods);
+    });
+
+    glfwSetMouseButtonCallback(mWindow, [](GLFWwindow *win, int button, int action, int mods) {
+        auto thisWindow = static_cast<OpenGLWindow*>(glfwGetWindowUserPointer(win));
+        thisWindow->handleMouseButtonEvents(button, action, mods);
+    });
+
+    glfwSetCursorPosCallback(mWindow, [](GLFWwindow *win, double x, double y) {
+        auto thisWindow = static_cast<OpenGLWindow*>(glfwGetWindowUserPointer(win));
+        thisWindow->handleMousePositionEvents(x, y);
+    });
+
+    glfwSetCursorEnterCallback(mWindow, [](GLFWwindow *win, int enter) {
+        auto thisWindow = static_cast<OpenGLWindow*>(glfwGetWindowUserPointer(win));
+        thisWindow->handleMouseEnterLeaveEvents(enter);
+    });
+
+
     info_msg("Window successfully initialized");
     return true;
 }
@@ -78,8 +99,8 @@ void OpenGLWindow::cleanup() {
     glfwTerminate();
 }
 
-void OpenGLWindow::handleWindowMoveEvents(int xPos, int yPos) {
-    info_msg_format("Window moved to: ({}, {})", xPos, yPos);
+void OpenGLWindow::handleWindowMoveEvents(int x, int y) {
+    info_msg_format("Window moved to: ({}, {})", x, y);
 }
 
 void OpenGLWindow::handleWindowMinimizedEvents(int minimized) {
@@ -98,4 +119,71 @@ void OpenGLWindow::handleWindowMaximizedEvents(int maximized) {
 
 void OpenGLWindow::handleWindowCloseEvents() {
     info_msg("Window close event received");
+}
+
+void OpenGLWindow::handleKeyEvents(int key, int scancode, int action, int mods) {
+    std::string actionName;
+    switch (action) {
+        case GLFW_PRESS:
+            actionName = "pressed";
+            break;
+        case GLFW_RELEASE:
+            actionName = "released";
+            break;
+        case GLFW_REPEAT:
+            actionName = "repeated";
+            break;
+        default:
+            actionName = "invalid";
+            break;
+    }
+
+    const char *keyName = glfwGetKeyName(key, 0);
+    info_msg_format("key {} (key {}, scancode {}) {}", keyName ? keyName : "null", key, scancode, actionName);
+}
+
+void OpenGLWindow::handleMouseButtonEvents(int button, int action, int mods) {
+    std::string actionName;
+    switch (action) {
+        case GLFW_PRESS:
+            actionName = "pressed";
+            break;
+        case GLFW_RELEASE:
+            actionName = "released";
+            break;
+        case GLFW_REPEAT:
+            actionName = "repeated";
+            break;
+        default:
+            actionName = "invalid";
+            break;
+    }
+
+    std::string mouseButtonName;
+    switch(button) {
+        case GLFW_MOUSE_BUTTON_LEFT:
+            mouseButtonName = "left";
+            break;
+        case GLFW_MOUSE_BUTTON_MIDDLE:
+            mouseButtonName = "middle";
+            break;
+        case GLFW_MOUSE_BUTTON_RIGHT:
+            mouseButtonName = "right";
+            break;
+        default:
+            mouseButtonName = "other";
+            break;
+    }
+    info_msg_format("{} mouse button ({}) {}", mouseButtonName, button, actionName);
+}
+
+void OpenGLWindow::handleMousePositionEvents(double x, double y) {
+    info_msg_format("Mouse position: ({}, {})", x, y);
+}
+
+void OpenGLWindow::handleMouseEnterLeaveEvents(int enter) {
+    if (enter)
+        info_msg("Mouse entered window");
+    else
+        info_msg("Mouse left window");
 }

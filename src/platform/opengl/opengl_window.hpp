@@ -20,10 +20,15 @@ namespace af::inline platform {
         void cleanup() override;
 
     private:
-        void handleWindowMoveEvents(int xPos, int yPos);
+        void handleWindowMoveEvents(int x, int y);
         void handleWindowMinimizedEvents(int minimized);
         void handleWindowMaximizedEvents(int maximized);
         void handleWindowCloseEvents();
+
+        void handleKeyEvents(int key, int scancode, int action, int mods);
+        void handleMouseButtonEvents(int button, int action, int mods);
+        void handleMousePositionEvents(double x, double y);
+        void handleMouseEnterLeaveEvents(int enter);
 
         GLFWwindow* mWindow { nullptr };
         std::string mApplicationName;
