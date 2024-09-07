@@ -1,12 +1,11 @@
-#include "window.hpp"
-
 #include "core/assert.hpp"
+#include "vulkan_window.hpp"
 
 #include <GLFW/glfw3.h>
 
 using namespace af;
 
-/*bool Window::init(unsigned int width, unsigned int height, const std::string& title) {
+bool VulkanWindow::init(unsigned int width, unsigned int height, const std::string& title) {
     if (!glfwInit()) {
         error_msg("glfwInit() error");
         return false;
@@ -22,7 +21,7 @@ using namespace af;
 
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-    *//* Vulkan needs no context *//*
+    /* Vulkan needs no context */
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     mWindow = glfwCreateWindow(width, height, mApplicationName.c_str(), nullptr, nullptr);
 
@@ -42,59 +41,9 @@ using namespace af;
 
     info_msg("Window successfully initialized");
     return true;
-}*/
-
-bool Window::init(unsigned int width, unsigned int height, const std::string& title) {
-    if (!glfwInit()) {
-        error_msg("glfwInit() error");
-        return false;
-    }
-
-    /* set a "hint" for the NEXT window created*/
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-
-    mWindow = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
-
-    if (!mWindow) {
-        error_msg("Could not create window");
-        glfwTerminate();
-        return false;
-    }
-
-    /* the C handlers needs a little 'stunt' here */
-    /* 1) save the pointer to the instance as user pointer */
-    glfwSetWindowUserPointer(mWindow, this);
-
-    /* 2) use a lambda to get the pointer and call the member function */
-    glfwSetWindowPosCallback(mWindow, [](GLFWwindow *win, int xpos, int ypos) {
-        auto thisWindow = static_cast<Window*>(glfwGetWindowUserPointer(win));
-        thisWindow->handleWindowMoveEvents(xpos, ypos);
-    }
-    );
-
-    glfwSetWindowIconifyCallback(mWindow, [](GLFWwindow *win, int minimized) {
-        auto thisWindow = static_cast<Window*>(glfwGetWindowUserPointer(win));
-        thisWindow->handleWindowMinimizedEvents(minimized);
-    }
-    );
-
-    glfwSetWindowMaximizeCallback(mWindow, [](GLFWwindow *win, int maximized) {
-        auto thisWindow = static_cast<Window*>(glfwGetWindowUserPointer(win));
-        thisWindow->handleWindowMaximizedEvents(maximized);
-    }
-    );
-
-    glfwSetWindowCloseCallback(mWindow, [](GLFWwindow *win) {
-        auto thisWindow = static_cast<Window*>(glfwGetWindowUserPointer(win));
-        thisWindow->handleWindowCloseEvents();
-    }
-    );
-
-    info_msg("Window successfully initialized");
-    return true;
 }
 
-bool Window::initVulkan() {
+bool VulkanWindow::initVulkan() {
     VkResult result = VK_ERROR_UNKNOWN;
 
     VkApplicationInfo mAppInfo{};
@@ -166,7 +115,7 @@ bool Window::initVulkan() {
     return true;
 }
 
-void Window::mainLoop() {
+void VulkanWindow::mainLoop() {
     // force VSYNC
     //    glfwSwapInterval(1);
 
@@ -185,7 +134,7 @@ void Window::mainLoop() {
     }
 }
 
-void Window::cleanup() {
+void VulkanWindow::cleanup() {
     info_msg("Cleaning up window");
 
 //    vkDestroySurfaceKHR(mInstance, mSurface, nullptr);
@@ -195,11 +144,11 @@ void Window::cleanup() {
     glfwTerminate();
 }
 
-void Window::handleWindowMoveEvents(int xPos, int yPos) {
+void VulkanWindow::handleWindowMoveEvents(int xPos, int yPos) {
     info_msg_format("Window moved to: ({}, {})", xPos, yPos);
 }
 
-void Window::handleWindowMinimizedEvents(int minimized) {
+void VulkanWindow::handleWindowMinimizedEvents(int minimized) {
     if (minimized) {
         info_msg("Window minimized");
     } else {
@@ -207,7 +156,7 @@ void Window::handleWindowMinimizedEvents(int minimized) {
     }
 }
 
-void Window::handleWindowMaximizedEvents(int maximized) {
+void VulkanWindow::handleWindowMaximizedEvents(int maximized) {
     if (maximized) {
         info_msg("Window maximized");
     } else {
@@ -215,6 +164,6 @@ void Window::handleWindowMaximizedEvents(int maximized) {
     }
 }
 
-void Window::handleWindowCloseEvents() {
+void VulkanWindow::handleWindowCloseEvents() {
     info_msg("Window close event received");
 }

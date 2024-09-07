@@ -12,6 +12,9 @@ if ( EXISTS "${LOC_PATH}" )
     message( FATAL_ERROR "You cannot build in the source directory. Please use a build subdirectory." )
 endif()
 
+# CMake option to switch between OpenGL and Vulkan
+option(USE_VULKAN "Use Vulkan for rendering" OFF)
+
 # Add paths to modules
 list( APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/" )
 
@@ -47,6 +50,7 @@ set(GAME_SOURCE)
 
 # add sources
 add_subdirectory(src/core)
+add_subdirectory(src/platform)
 
 # add th app executable
 add_executable(${PROJECT_NAME} ${GAME_SOURCE})
@@ -100,12 +104,20 @@ include( ClangFormat )
 add_definitions(-DGLEW_STATIC)
 add_definitions(-DGL_SILENCE_DEPRECATION)
 add_subdirectory(thirdparty/glfw EXCLUDE_FROM_ALL)
-add_subdirectory(thirdparty/glew EXCLUDE_FROM_ALL)
 
-if(NOT DEFINED ENV{VULKAN_SDK})
-    message(FATAL_ERROR "VULKAN_SDK environment variable is not set. Please install Vulkan SDK and set the environment variable.")
+set(RENDER_LIBS)
+
+# Find OpenGL or Vulkan based on the selected mode
+if(USE_VULKAN)
+    if(NOT DEFINED ENV{VULKAN_SDK})
+        message(FATAL_ERROR "VULKAN_SDK environment variable is not set. Please install Vulkan SDK and set the environment variable.")
+    endif()
+    find_package(Vulkan REQUIRED)
+    set(RENDER_LIBS ${RENDER_LIBS} Vulkan::Vulkan)
+else()
+    add_subdirectory(thirdparty/glew EXCLUDE_FROM_ALL)
+    set(RENDER_LIBS ${RENDER_LIBS} libglew_static)
 endif()
-find_package(Vulkan REQUIRED)
 
 
 #add_subdirectory(thirdparty/fmt)
@@ -116,9 +128,8 @@ find_package(Vulkan REQUIRED)
 # =======================================================================
 
 target_link_libraries(${PROJECT_NAME}
-        PRIVATE Vulkan::Vulkan
+        PRIVATE ${RENDER_LIBS}
         PRIVATE glfw
-        PRIVATE libglew_static
 #        PRIVATE fmt::fmt
 #        PRIVATE fmt::fmt-header-only
 #        PRIVATE spdlog::spdlog_header_only

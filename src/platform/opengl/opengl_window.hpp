@@ -1,21 +1,22 @@
 #pragma once
-#ifndef ANIMAFLOW_WINDOW_HPP
-#define ANIMAFLOW_WINDOW_HPP
+#ifndef ANIMAFLOW_OPENGL_WINDOW_HPP
+#define ANIMAFLOW_OPENGL_WINDOW_HPP
 
 #include <string>
-#include <vulkan/vulkan.h>
+#include "platform/window_interface.hpp"
 
 // Forward declaration
 struct GLFWwindow;
 
-namespace af::inline core {
+namespace af::inline platform {
 
-    class Window {
+    class OpenGLWindow : public WindowInterface {
     public:
-        bool init(unsigned int width, unsigned int height, const std::string& title);
-        bool initVulkan();
-        void mainLoop();
-        void cleanup();
+        ~OpenGLWindow() override;
+
+        bool init(unsigned int width, unsigned int height, const std::string& title) override;
+        void mainLoop() override;
+        void cleanup() override;
 
     private:
         void handleWindowMoveEvents(int xPos, int yPos);
@@ -26,10 +27,8 @@ namespace af::inline core {
         GLFWwindow* mWindow { nullptr };
         std::string mApplicationName;
 
-        VkInstance mInstance{};
-        VkSurfaceKHR mSurface{};
     };
 
 }  // namespace af::inline core
 
-#endif  // ANIMAFLOW_WINDOW_HPP
+#endif  // ANIMAFLOW_OPENGL_WINDOW_HPP
