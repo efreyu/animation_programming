@@ -119,6 +119,7 @@ else()
     add_subdirectory(thirdparty/glad)
     find_package(OpenGL REQUIRED)
     find_package(glm REQUIRED)
+    include_directories(${GLM_INCLUDE_DIRS})
     set(RENDER_LIBS ${RENDER_LIBS} OpenGL::GL glad)
 endif()
 
