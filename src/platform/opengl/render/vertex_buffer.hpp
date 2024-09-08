@@ -9,7 +9,7 @@
 
 #include "ogl_render_data.hpp"
 
-namespace af {
+namespace af::inline platform::opengl {
     class VertexBuffer {
     public:
         void init();

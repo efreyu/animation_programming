@@ -1,7 +1,7 @@
 #include "vertex_buffer.hpp"
 #include "core/assert.hpp"
 
-using namespace af;
+using namespace af::opengl;
 
 void VertexBuffer::init() {
     glGenVertexArrays(1, &mVAO);

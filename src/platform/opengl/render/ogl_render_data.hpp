@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 #include <vector>
 
-namespace af {
+namespace af::inline platform::opengl {
 
     struct OGLVertex {
         glm::vec3 position;

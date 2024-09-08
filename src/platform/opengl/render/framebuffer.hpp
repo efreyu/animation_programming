@@ -5,7 +5,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-namespace af {
+namespace af::inline platform::opengl {
     class Framebuffer {
     public:
         bool init(unsigned int width, unsigned int height);

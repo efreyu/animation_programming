@@ -7,7 +7,7 @@
 #include <glm/glm.hpp>
 #include <vector>
 
-namespace af {
+namespace af::inline platform::opengl {
     class Model {
     public:
         void init();

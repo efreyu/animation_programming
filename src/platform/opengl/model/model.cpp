@@ -1,7 +1,7 @@
 #include "model.hpp"
 #include "core/assert.hpp"
 
-using namespace af;
+using namespace af::opengl;
 
 void Model::init() {
     mVertexData.vertices.resize(6);

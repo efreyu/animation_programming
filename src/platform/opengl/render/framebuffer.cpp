@@ -1,7 +1,7 @@
 #include "framebuffer.hpp"
 #include "core/assert.hpp"
 
-using namespace af;
+using namespace af::opengl;
 
 bool Framebuffer::init(unsigned int width, unsigned int height) {
     mBufferWidth = width;
@@ -47,7 +47,7 @@ void Framebuffer::cleanup() {
 }
 
 bool Framebuffer::resize(unsigned int newWidth, unsigned int newHeight) {
-    info_msg_format("Resizing framebuffer from {} to {}", mBufferWidth, mBufferHeight, newWidth, newHeight);
+    info_msg_format("Resizing framebuffer from {}x{} to {}x{}", mBufferWidth, mBufferHeight, newWidth, newHeight);
     mBufferWidth = newWidth;
     mBufferHeight = newHeight;
 
