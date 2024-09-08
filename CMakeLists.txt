@@ -116,7 +116,6 @@ if(USE_VULKAN)
     set(RENDER_LIBS ${RENDER_LIBS} Vulkan::Vulkan)
     add_definitions(-DUSE_VULKAN) # Add a definition to the project
 else()
-#    add_subdirectory(thirdparty/glew EXCLUDE_FROM_ALL)
     add_subdirectory(thirdparty/glad)
     find_package(OpenGL REQUIRED)
     find_package(glm REQUIRED)
