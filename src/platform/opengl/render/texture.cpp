@@ -2,9 +2,8 @@
 
 
 #define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
-
 #include "core/assert.hpp"
+#include "stb_image.h"
 
 using namespace af::opengl;
 

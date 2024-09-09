@@ -117,11 +117,10 @@ if(USE_VULKAN)
     add_definitions(-DUSE_VULKAN) # Add a definition to the project
 else()
     add_subdirectory(thirdparty/glad)
-    add_subdirectory(thirdparty/stb_image)
     find_package(OpenGL REQUIRED)
     find_package(glm REQUIRED)
     include_directories(${GLM_INCLUDE_DIRS})
-    set(RENDER_LIBS ${RENDER_LIBS} OpenGL::GL glad stb_image)
+    set(RENDER_LIBS ${RENDER_LIBS} OpenGL::GL glad)
 endif()
 
 

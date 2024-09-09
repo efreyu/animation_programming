@@ -8,6 +8,7 @@ list(APPEND GLAD_SOURCES
         glad/glad.h
         KHR/khrplatform.h
         glad.c
+        stb_image.h
 )
 
 add_library(${lib_name} STATIC ${GLAD_SOURCES})
