@@ -7,12 +7,12 @@ bool OGLRenderer::init(unsigned int width, unsigned int height) {
 
     /* initalize GLAD */
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-        error_msg("error: failed to initialize GLAD");
+        error_msg("failed to initialize GLAD");
         return false;
     }
 
     if (!GLAD_GL_VERSION_4_6) {
-        Logger::log(1, "%s error: failed to get at least OpenGL 4.6\n", __FUNCTION__);
+        error_msg("failed to get at least OpenGL 4.6");
         return false;
     }
 
