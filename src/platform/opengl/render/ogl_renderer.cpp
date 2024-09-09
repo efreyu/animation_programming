@@ -11,10 +11,10 @@ bool OGLRenderer::init(unsigned int width, unsigned int height) {
         return false;
     }
 
-    if (!GLAD_GL_VERSION_4_6) {
-        error_msg("failed to get at least OpenGL 4.6");
-        return false;
-    }
+//    if (!GLAD_GL_VERSION_4_6) {
+//        error_msg("failed to get at least OpenGL 4.6");
+//        return false;
+//    }
 
     GLint majorVersion, minorVersion;
     glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
@@ -27,7 +27,7 @@ bool OGLRenderer::init(unsigned int width, unsigned int height) {
     }
     info_msg("framebuffer successfully initialized");
 
-    if (!mTex.loadTexture("textures/crate.png")) {
+    if (!mTex.loadTexture("assets/crate.png")) {
         error_msg("texture loading failed");
         return false;
     }

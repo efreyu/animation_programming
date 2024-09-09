@@ -141,33 +141,5 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 
-# copy shader files
-file(GLOB GLSL_SOURCE_FILES
-        shader/*.frag
-        shader/*.vert
-)
-add_custom_target(
-        Shaders
-        DEPENDS ${GLSL_SOURCE_FILES}
-)
-add_dependencies(${PROJECT_NAME} Shaders)
-add_custom_command(TARGET Shaders POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "$<TARGET_PROPERTY:${PROJECT_NAME},SOURCE_DIR>/shader"
-        "$<TARGET_PROPERTY:${PROJECT_NAME},BINARY_DIR>/$<CONFIGURATION>/shader"
-)
-# copy textures
-file(GLOB TEX_SOURCE_FILES
-        assets/*
-)
-add_custom_target(
-        Textures
-        DEPENDS ${TEX_SOURCE_FILES}
-)
-add_dependencies(${PROJECT_NAME} Textures)
-
-add_custom_command(TARGET Textures POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "$<TARGET_PROPERTY:${PROJECT_NAME},SOURCE_DIR>/assets"
-        "$<TARGET_PROPERTY:${PROJECT_NAME},BINARY_DIR>/$<CONFIGURATION>/assets"
-)
+file(COPY assets DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY shader DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

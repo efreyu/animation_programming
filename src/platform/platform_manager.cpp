@@ -46,7 +46,7 @@ std::unique_ptr<WindowInterface> PlatformManager::createWindow() {
 #ifdef USE_VULKAN
         mWindow = std::make_unique<VulkanWindow>();
 #else
-        mWindow = std::make_unique<OpenGLWindow>();
+        mWindow = std::make_unique<opengl::OpenGLWindow>();
 #endif
     }
     return std::move(mWindow);

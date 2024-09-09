@@ -79,7 +79,7 @@ bool Shader::createShaderProgram(std::string vertexShaderFileName, std::string f
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
-    error_msg_format("shader program {} successfully compiled from vertex shader '{}' and fragment shader '{}'", mShaderProgram, vertexShaderFileName, fragmentShaderFileName);
+    info_msg_format("shader program {} successfully compiled from vertex shader '{}' and fragment shader '{}'", mShaderProgram, vertexShaderFileName, fragmentShaderFileName);
     return true;
 }
 
@@ -94,7 +94,7 @@ bool Shader::checkCompileStats(std::string shaderFileName, GLuint shader) {
         shaderLog = std::vector<char>(logMessageLength + 1);
         glGetShaderInfoLog(shader, logMessageLength, &logMessageLength, shaderLog.data());
         shaderLog.at(logMessageLength) = '\0';
-        error_msg_format("shader compile of shader '{}' failed", shaderFileName);
+        info_msg_format("shader compile of shader '{}' failed", shaderFileName);
         error_msg_format("shader compile log:\n{}", shaderLog.data());
         return false;
     }

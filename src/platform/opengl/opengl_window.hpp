@@ -3,12 +3,15 @@
 #define ANIMAFLOW_OPENGL_WINDOW_HPP
 
 #include <string>
+#include <memory>
 #include "platform/window_interface.hpp"
+#include "model/model.hpp"
+#include "render/ogl_renderer.hpp"
 
 // Forward declaration
 struct GLFWwindow;
 
-namespace af::inline platform {
+namespace af::inline platform::opengl {
 
     class OpenGLWindow : public WindowInterface {
     public:
@@ -31,7 +34,12 @@ namespace af::inline platform {
         void handleMouseEnterLeaveEvents(int enter);
 
         GLFWwindow* mWindow { nullptr };
-        std::string mApplicationName;
+
+        std::unique_ptr<OGLRenderer> mRenderer;
+        std::unique_ptr<Model> mModel;
+
+        unsigned int mScreenWidth = 640;
+        unsigned int mScreenHeight = 480;
 
     };
 

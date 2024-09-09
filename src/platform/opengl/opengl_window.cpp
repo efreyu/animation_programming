@@ -4,7 +4,7 @@
 
 #include <GLFW/glfw3.h>
 
-using namespace af;
+using namespace af::platform::opengl;
 
 bool OpenGLWindow::init(unsigned int width, unsigned int height, const std::string& title) {
     if (!glfwInit()) {
@@ -13,9 +13,18 @@ bool OpenGLWindow::init(unsigned int width, unsigned int height, const std::stri
     }
 
     /* set a "hint" for the NEXT window created*/
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+#ifdef __APPLE__
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+    glfwWindowHint (GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwWindowHint (GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#else
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#endif
 
-    mWindow = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
+    mWindow = glfwCreateWindow(mScreenWidth, mScreenHeight, title.c_str(), nullptr, nullptr);
 
     if (!mWindow) {
         error_msg("Could not create window");
@@ -23,12 +32,31 @@ bool OpenGLWindow::init(unsigned int width, unsigned int height, const std::stri
         return false;
     }
 
+    glfwMakeContextCurrent(mWindow);
+
+    mRenderer = std::make_unique<OGLRenderer>();
+    if (!mRenderer->init(width, height)) {
+        glfwTerminate();
+        error_msg("Could not init OpenGL");
+        return false;
+    }
+
+    glfwSetWindowUserPointer(mWindow, mRenderer.get());
+    glfwSetWindowSizeCallback(mWindow, [](GLFWwindow *win, int width, int height) {
+        auto renderer = static_cast<OGLRenderer*>(glfwGetWindowUserPointer(win));
+        renderer->setSize(width, height);
+    }
+    );
+
+    mModel = std::make_unique<Model>();
+    mModel->init();
+
     /* the C handlers needs a little 'stunt' here */
     /* 1) save the pointer to the instance as user pointer */
-    glfwSetWindowUserPointer(mWindow, this);
+//    glfwSetWindowUserPointer(mWindow, this);
 
     /* 2) use a lambda to get the pointer and call the member function */
-    glfwSetWindowPosCallback(mWindow, [](GLFWwindow* win, int xpos, int ypos) {
+    /*glfwSetWindowPosCallback(mWindow, [](GLFWwindow* win, int xpos, int ypos) {
         auto thisWindow = static_cast<OpenGLWindow*>(glfwGetWindowUserPointer(win));
         thisWindow->handleWindowMoveEvents(xpos, ypos);
     });
@@ -66,7 +94,7 @@ bool OpenGLWindow::init(unsigned int width, unsigned int height, const std::stri
     glfwSetCursorEnterCallback(mWindow, [](GLFWwindow *win, int enter) {
         auto thisWindow = static_cast<OpenGLWindow*>(glfwGetWindowUserPointer(win));
         thisWindow->handleMouseEnterLeaveEvents(enter);
-    });
+    });*/
 
 
     info_msg("Window successfully initialized");
@@ -74,26 +102,28 @@ bool OpenGLWindow::init(unsigned int width, unsigned int height, const std::stri
 }
 
 void OpenGLWindow::mainLoop() {
-    // force VSYNC
+    /* force VSYNC */
     glfwSwapInterval(1);
 
-    float color = 0.0f;
-    while (!glfwWindowShouldClose(mWindow)) {
-        color >= 1.0f ? color = 0.0f : color += 0.01f;
+    /* upload only once for now */
+    mRenderer->uploadData(mModel->getVertexData());
 
-        glClearColor(color, color, color, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+    while (!glfwWindowShouldClose(mWindow)) {
+        mRenderer->draw();
 
         /* swap buffers */
         glfwSwapBuffers(mWindow);
 
         /* poll events in a loop */
         glfwPollEvents();
+
     }
 }
 
 void OpenGLWindow::cleanup() {
     info_msg("Cleaning up window");
+
+    mRenderer->cleanup();
 
     glfwDestroyWindow(mWindow);
     glfwTerminate();
